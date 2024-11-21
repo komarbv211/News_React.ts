@@ -9,6 +9,7 @@ import NewsCard from './components/NewsCard'
 import Login from './components/Login'
 import Registr from './components/Register'
 import { ProtectedRoute } from './security/ProtectedRoute'
+import NewsInfo from './components/NewsInfo'
 function App() {
   return (
     <Routes>
@@ -16,6 +17,7 @@ function App() {
         <Route index element={<Home/>} />
         <Route path='/news-card' element={<NewsCard />} />
         <Route path="/news" element={<NewsList />} />
+        <Route path='/news/:id' element={<NewsInfo />} />
         <Route path="/news/create" element={<ProtectedRoute><CreateNews /></ProtectedRoute>} />
         <Route path="/news/edit/:id" element={<UpdateNews />} />
         <Route path="/login" element={<Login />} />

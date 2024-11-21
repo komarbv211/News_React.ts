@@ -19,7 +19,7 @@ export interface NewsFormFields {
     publishDate: string; 
     categoryId: number;
     authorId: number;
-    images?: string | File;
+    images?: File | null;
     author?: Author
 }
 

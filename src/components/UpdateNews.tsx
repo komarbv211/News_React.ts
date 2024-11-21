@@ -3,7 +3,7 @@ import { Form, Input, Button, Select, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { NewsFormFields } from '../models/news';
+import { News, NewsFormFields } from '../models/news';
 import { getNewsById, updateNews } from '../services/newsService';
 import { Category } from '../models/category';
 import { Author } from '../models/author';
@@ -11,7 +11,7 @@ import { Author } from '../models/author';
 
 const UpdateNews: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [news, setNews] = useState<NewsFormFields | null>(null);
+  const [news, setNews] = useState<News | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -55,23 +55,22 @@ const UpdateNews: React.FC = () => {
       formData.append('authorId', values.authorId.toString());
   
       if (file) {
-        // Якщо нове зображення обрано, додаємо його до formData
+        // Додаємо файл, якщо він вибраний
         formData.append('images', file);
-      } else if (news && news.images) {
-        // Якщо зображення не змінене, просто відправляємо існуюче зображення
-        formData.append('existingImagePath', news.images);
       }
   
+      // Виклик оновлення новин
       await updateNews(formData as unknown as NewsFormFields);
       message.success('News updated successfully.');
       navigate('/news');
     } catch (error) {
-      console.error("Error updating news:", error);
+      console.error('Error updating news:', error);
       message.error('Failed to update news.');
     } finally {
       setLoading(false);
     }
   };
+  
   
 
   const handleImageChange = (file: File) => {
@@ -156,7 +155,7 @@ const UpdateNews: React.FC = () => {
           >
             <Button icon={<UploadOutlined />}>Upload Image</Button>
           </Upload>
-          {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: 100, height: 100, marginTop: 10 }} />}
+          {imagePreview && <img src={imagePreview} alt="Preview" style={{ height: 100, marginTop: 10 }} />}
         </Form.Item>
 
         <Form.Item>

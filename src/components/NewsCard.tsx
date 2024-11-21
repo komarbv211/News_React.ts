@@ -4,13 +4,15 @@ import { News } from '../models/news';
 import { fetchNews } from '../services/newsService';
 import ProgressSpinner from './ProgressSpinner';
 import Image from '../assets/istockphoto.png';
+import {useNavigate} from 'react-router-dom';
 const { Meta } = Card;
 
 const NewsCard: React.FC = () => {
   const [newsList, setNewsList] = useState<News[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const loadNews = async () => {
       try {
@@ -49,6 +51,7 @@ const NewsCard: React.FC = () => {
               style={{ height: '150px', objectFit: 'cover' }}
             />
           }
+          onClick={() => navigate(`/news/${news.id}`)}
         >
           <Meta title={news.title} description={news.description} />
         </Card>
