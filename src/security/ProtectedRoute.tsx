@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAccountContext } from "../contexts/useAccountContext";
+import { useAccountContext } from "../hooks/useAccountContext";
 interface ProtectedRouteProps {
     children: JSX.Element;
     //allowedRoles: ("admin" | "staff")[]; // set the user-roles
