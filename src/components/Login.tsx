@@ -4,11 +4,12 @@ import { Button, Checkbox, Form, Input, message } from 'antd';
 import API from '../services/accountsService';
 import { tokenService } from '../services/tokenService';
 import { LoginField } from '../models/accounts';
-import { useAccountContext } from '../hooks/useAccountContext';
+import { useDispatch } from 'react-redux';
+import { setAccount } from '../redux/account/accountSlice';
 
 const Login: React.FC = () => {
 
-    const { setAccount } = useAccountContext();
+    const dispatch = useDispatch();
 
    const onFinish: FormProps<LoginField>['onFinish'] = (values) => {
     console.log('Success:', values);
@@ -19,7 +20,8 @@ const Login: React.FC = () => {
             if (res.status === 200) {
                 tokenService.save(res.data.accessToken);
                 message.success("Login successful!");
-                setAccount(tokenService.getPayload());
+                const payload = tokenService.getPayload();
+                if (payload) dispatch(setAccount(payload));
             }
         })
         .catch(err => {

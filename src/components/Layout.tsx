@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Layout, Menu, theme } from 'antd';
 import { HomeFilled, InfoCircleFilled, LikeFilled, LoginOutlined, LogoutOutlined, ProductFilled, UserAddOutlined } from '@ant-design/icons';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { AccountContext } from '../contexts/AccountContext'; 
 import { accountService } from '../services/accountsService';
+import { useAppSelector } from '../redux/hooks';
+import { useDispatch } from 'react-redux';
+import { clear, selectAccount, selectIsAuth } from '../redux/account/accountSlice';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -13,6 +15,11 @@ interface Category {
 
 const LayoutAnt: React.FC = () => {
   const { pathname } = useLocation();
+
+  const account = useAppSelector(selectAccount);
+  const isAuth = useAppSelector(selectIsAuth);
+  const dispatch = useDispatch();
+
   const [current, setCurrent] = useState<string>(pathname);
   const [selectedMenu, setSelectedMenu] = useState<string>(pathname);
   const [categories, setCategories] = useState<Category[]>([]); 
@@ -33,7 +40,10 @@ const LayoutAnt: React.FC = () => {
     };
     fetchCategories();
   }, ); 
-
+  const logout = () => {
+    accountService.logout();
+    dispatch(clear());
+}
   const items = [
     {
       key: "/",
@@ -67,15 +77,6 @@ const LayoutAnt: React.FC = () => {
     setSelectedMenu(e.key); // Оновлення вибраного пункту меню
   };
 
-  const context = useContext(AccountContext); 
-
-  // Ensure context is not null before accessing its properties
-  if (!context) {
-    return null; // Or a fallback UI like a loading spinner or an error message
-  }
-
-  const { account, isAuth, clear } = context;
-
   return (
     <Layout className="LayoutAnt">
       <Header
@@ -97,16 +98,13 @@ const LayoutAnt: React.FC = () => {
           }}
         />
         <div>
-          {isAuth() ? (
+          { isAuth ? (
             <>
               <span style={{ color: '#bfbfbf', padding: "10px" }}>Hello, {account?.email}</span>
               <Button
                 type="text"
                 icon={<LogoutOutlined />}
-                onClick={() => {
-                  accountService.logout();
-                  clear(); // Очищаємо контекст
-                }}
+                onClick={logout}
                 style={{
                   color: '#bfbfbf',
                   fontSize: '16px',

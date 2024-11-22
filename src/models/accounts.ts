@@ -14,7 +14,7 @@ export type LoginField = {
 export interface TokenPayload {
     id: string;
     email: string;
-    birthDate?: Date;
+    birthDate?: string;
     role: string;
 }
 

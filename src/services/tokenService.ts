@@ -23,7 +23,7 @@ export const tokenService = {
             return {
                 id: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
                 email: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-                birthDate: new Date(payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth"] ?? ""),
+                birthDate: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth"] ?? "",
                 role: payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],            }
         } catch (error) {
             console.error("Failed to decode token:", error);
