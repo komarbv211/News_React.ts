@@ -4,7 +4,6 @@ import NewsCard from './NewsCard';
 const Home: React.FC = () => {
   return (
     <div>
-      <p>Hello!!!</p>
       <NewsCard />
     </div>
   );

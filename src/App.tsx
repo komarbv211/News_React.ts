@@ -10,6 +10,7 @@ import Login from './components/Login'
 import Registr from './components/Register'
 import { ProtectedRoute } from './security/ProtectedRoute'
 import NewsInfo from './components/NewsInfo'
+import NewsCardByCategory from './components/NewsCardByCategory'
 function App() {
   return (
     <Routes>
@@ -22,7 +23,7 @@ function App() {
         <Route path="/news/edit/:id" element={<UpdateNews />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registr />} />
-
+        <Route path="/news/category/:categoryId" element={<NewsCardByCategory />} />
         <Route path='*' element={<p>Page Not Found!</p>} />
       </Route>
     </Routes>

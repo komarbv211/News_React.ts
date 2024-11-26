@@ -6,12 +6,10 @@ import { accountService } from '../services/accountsService';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import { clear, selectAccount, selectIsAuth } from '../redux/account/accountSlice';
-
+import { getAllCategories } from "../services/categoryService";
+import { Category } from '../models/category';
 const { Header, Content, Footer, Sider } = Layout;
 
-interface Category {
-  name: string;
-}
 
 const LayoutAnt: React.FC = () => {
   const { pathname } = useLocation();
@@ -25,21 +23,21 @@ const LayoutAnt: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]); 
 
   const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/Categories/GetAll`);
-        const data: Category[] = await response.json();
+        const data = await getAllCategories();
         setCategories(data);
+        
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
+
     fetchCategories();
-  }, ); 
+  }, []);
   const logout = () => {
     accountService.logout();
     dispatch(clear());
@@ -68,13 +66,13 @@ const LayoutAnt: React.FC = () => {
   ];
 
   const sidebarMenuItems = categories.map((category) => ({
-    key: `/news/${category.name}`,
-    label: <Link to={`/news/${category.name}`}>{category.name}</Link>,
-  }));
+    key: `/news/category/${category.id}`, 
+    label: <Link to={`/news/category/${category.id}`}>{category.name}</Link>,  }));
+  
 
   const handleMenuClick = (e: { key: string }) => {
     setCurrent(e.key);
-    setSelectedMenu(e.key); // Оновлення вибраного пункту меню
+    setSelectedMenu(e.key); 
   };
 
   return (
