@@ -49,3 +49,24 @@ export const deleteNews = async (id: number): Promise<void> => {
     throw error;
   }
 };
+export const filterNews = async (filters: {
+  keyword?: string;
+  categoryId?: number;
+  authorId?: number;
+  fromDate?: string;
+  toDate?: string;
+  includeAuthor?: boolean;
+  includeCategory?: boolean;
+  includeComments?: boolean;
+}): Promise<News[]> => {
+  try {
+    const response = await api.get<News[]>(`${API_BASE_URL}News/Filter`, {
+      params: filters, 
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error filtering news:", error);
+    throw error;
+  }
+};
+

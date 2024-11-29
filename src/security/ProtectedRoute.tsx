@@ -3,7 +3,7 @@ import { useAppSelector } from "../redux/hooks";
 import { selectIsAuth } from "../redux/account/accountSlice";
 interface ProtectedRouteProps {
     children: JSX.Element;
-    //allowedRoles: ("admin" | "staff")[]; // set the user-roles
+    //allowedRoles: ("admin" | "user" | "author")[]; 
 }
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         const isAuth = useAppSelector(selectIsAuth);

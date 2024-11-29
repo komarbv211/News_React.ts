@@ -30,7 +30,7 @@ export default function NewsInfo() {
                     <div>
                         <h2>{newsItem.title}</h2>
                         <Tag color="blue">Published: {new Date(newsItem.publishDate).toLocaleDateString()}</Tag>
-                        <p>Category ID: {newsItem.categoryId}</p>
+                        <p>Category : {newsItem.categoryId}</p>
                         <p>Author: {newsItem.author?.fullName || "Unknown"}</p>
                         <hr />
                         {newsItem.images && (

@@ -59,8 +59,8 @@ const LayoutAnt: React.FC = () => {
       icon: <Link to="/favorites"><LikeFilled /></Link>,
     },
     {
-      key: "/about",
-      label: <Link to="/about">About</Link>,
+      key: "/authorOffice",
+      label: <Link to="/authorOffice">Author Office</Link>,
       icon: <InfoCircleFilled />,
     },
   ];

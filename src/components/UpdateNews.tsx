@@ -135,8 +135,8 @@ const UpdateNews: React.FC = () => {
         <Form.Item
           label="Author"
           name="authorId"
-          rules={[{ required: true, message: 'Please select an author!' }]}>
-          <Select placeholder="Select an author">
+          rules={[{ required: true/*, message: 'Please select an author!' */}]}>
+          <Select placeholder="Select an author" disabled={!!news}>
             {authors.map((author) => (
               <Select.Option key={author.id} value={author.id}>
                 {author.fullName}

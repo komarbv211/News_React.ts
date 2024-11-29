@@ -11,6 +11,7 @@ import Registr from './components/Register'
 import { ProtectedRoute } from './security/ProtectedRoute'
 import NewsInfo from './components/NewsInfo'
 import NewsCardByCategory from './components/NewsCardByCategory'
+import AuthorOffice from './components/AuthorOffice'
 function App() {
   return (
     <Routes>
@@ -18,6 +19,7 @@ function App() {
         <Route index element={<Home/>} />
         <Route path='/news-card' element={<NewsCard />} />
         <Route path="/news" element={<NewsList />} />
+        <Route path="/authorOffice" element={<AuthorOffice />} />
         <Route path='/news/:id' element={<NewsInfo />} />
         <Route path="/news/create" element={<ProtectedRoute><CreateNews /></ProtectedRoute>} />
         <Route path="/news/edit/:id" element={<UpdateNews />} />

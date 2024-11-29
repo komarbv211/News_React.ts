@@ -7,9 +7,12 @@ export interface News {
     fullText: string;
     publishDate: string; 
     categoryId: number;
+    categoryName:string; 
     authorId: number;
+    authorName:string; 
     images?: string;
-    author?: Author
+    author?: Author;
+
 }
 export interface NewsFormFields {
     id:number;
