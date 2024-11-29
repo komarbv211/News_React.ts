@@ -10,9 +10,10 @@ import { filterAuthors } from "../services/authorService";
 import { tokenService } from "../services/tokenService";
 
 const AuthorOffice: React.FC = () => {
-  const [newsList, setNewsList] = useState<News[]>([]);
+  const [newsList, setNewsList] = useState<News[]>([]); // Make sure News type is correct
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Load news associated with the current author
   const loadNews = async () => {
     setLoading(true);
     try {
@@ -33,9 +34,9 @@ const AuthorOffice: React.FC = () => {
           fullText: newsItem.fullText ?? "",
           categoryId: newsItem.categoryId ?? 0,
           categoryName: newsItem.categoryName ?? "",
-          authorId: author.id,
-          authorName: author.fullName,
-          images: newsItem.images || "/placeholder.png",
+          authorId: author.id ?? 0,
+          authorName: author.fullName ?? "",
+          images: newsItem.images || undefined,
         })) ?? []
       );
       setNewsList(news);
@@ -46,6 +47,7 @@ const AuthorOffice: React.FC = () => {
     }
   };
 
+  // Handle deleting news
   const handleDelete = async (id: number) => {
     try {
       await deleteNews(id);
@@ -80,7 +82,7 @@ const AuthorOffice: React.FC = () => {
       key: "description",
     },
     {
-      title: "AuthorName",
+      title: "Author Name",
       dataIndex: "authorName",
       key: "authorName",
     },

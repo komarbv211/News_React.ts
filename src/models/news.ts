@@ -7,9 +7,9 @@ export interface News {
     fullText: string;
     publishDate: string; 
     categoryId: number;
-    categoryName:string; 
+    categoryName?:string; 
     authorId: number;
-    authorName:string; 
+    authorName?:string; 
     images?: string;
     author?: Author;
 

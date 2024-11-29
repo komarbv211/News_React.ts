@@ -15,7 +15,9 @@ const CreateNews: React.FC = () => {
     fullText: '',
     publishDate: '',
     categoryId: 1,
+    categoryName: '',
     authorId: 1,
+    authorName: '',
     images: undefined,
   });
 
