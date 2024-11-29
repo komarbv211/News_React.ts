@@ -22,14 +22,14 @@ export const getNewsById = async (id: number): Promise<News> => {
     throw error;
   }
 };
-
-export const createNews = async (news: News): Promise<void> => {
+export const createNews = async (formData: FormData): Promise<void> => {
   try {
-    await api.post(`${API_BASE_URL}/News/Create`, news);
+    return await api.post(`${API_BASE_URL}/News/Create`, formData);
   } catch (error) {
     console.error("Error creating news:", error);
     throw error;
   }
+
 };
 
 export const updateNews = async (news: NewsFormFields): Promise<void> => {

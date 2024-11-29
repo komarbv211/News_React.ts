@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, Select,  message, Spin } from 'antd';
-import axios from 'axios';
+import { Button, Form, Input, Select, message, Spin } from 'antd';
 import { News } from '../models/news';
 import { Category } from '../models/category';
 import { Author } from '../models/author';
 import { useNavigate } from 'react-router-dom';
-
+import { getAllCategories } from '../services/categoryService';
+import { filterAuthors, getAllAuthors } from '../services/authorService';
+import { createNews } from '../services/newsService';
+import { tokenService } from '../services/tokenService';
 
 const CreateNews: React.FC = () => {
   const [news, setNews] = useState<Omit<News, 'images'> & { images?: File }>({
@@ -21,49 +23,45 @@ const CreateNews: React.FC = () => {
     images: undefined,
   });
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   const [categories, setCategories] = useState<Category[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get<Category[]>(`${API_BASE_URL}Categories/GetAll`);
-        setCategories(data);
-        if (data.length > 0) {
-          setNews((prevState) => ({ ...prevState, categoryId: data[0].id }));
+        const [categoryData, authorData] = await Promise.all([
+          getAllCategories(),
+          getAllAuthors(),
+        ]);
+        setCategories(categoryData);
+        const payload = tokenService.getPayload();
+        const filters: { authorId?: string } = {};
+  
+        if (payload) {
+          filters.authorId = payload.id.toString();
+        }
+        const authors = await filterAuthors(undefined, filters.authorId);
+
+        setAuthors(authors);
+
+        if (categoryData.length > 0) {
+          setNews((prevState) => ({ ...prevState, categoryId: categoryData[0].id }));
+        }
+        if (authorData.length > 0) {
+          setNews((prevState) => ({ ...prevState, authorId: authorData[0].id }));
         }
       } catch {
-        message.error('Failed to load categories');
+        message.error('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCategories();
-  }, [API_BASE_URL]);
-
-  useEffect(() => {
-    const fetchAuthors = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get<Author[]>(`${API_BASE_URL}Authors/GetAll`);
-        setAuthors(data);
-        if (data.length > 0) {
-          setNews((prevState) => ({ ...prevState, authorId: data[0].id }));
-        }
-      } catch  {
-        message.error('Failed to load authors');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAuthors();
-  }, [API_BASE_URL]);
+    fetchData();
+  }, []);
 
   const handleCreateNews = async () => {
     setLoading(true);
@@ -81,42 +79,31 @@ const CreateNews: React.FC = () => {
     }
 
     try {
-      await axios.post(`${API_BASE_URL}/News/Create`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      message.success('The news has been successfully created!');
+      await createNews(formData);
+      message.success('News created successfully!');
       navigate('/news');
-    } catch  {
-      message.error('An error occurred while creating the news');
+    } catch {
+      message.error('Error occurred while creating the news');
     } finally {
       setLoading(false);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; 
+    const file = e.target.files?.[0];
     if (file) {
-      setNews((prevState) => ({
-        ...prevState,
-        images: file,
-      }));
+      setNews((prevState) => ({ ...prevState, images: file }));
     }
   };
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNews((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setNews((prevState) => ({ ...prevState, [name]: value }));
   };
 
   return (
     <div className="container mt-5">
-      <h2>Creating news</h2>
+      <h2>Create News</h2>
       <Spin spinning={loading}>
         <Form
           layout="vertical"
@@ -124,7 +111,6 @@ const CreateNews: React.FC = () => {
           style={{ maxWidth: 600, margin: '0 auto' }}
           initialValues={{
             categoryId: categories.length > 0 ? categories[0].id : 1,
-            authorId: authors.length > 0 ? authors[0].id : 1,
           }}
         >
           <Form.Item
@@ -135,7 +121,7 @@ const CreateNews: React.FC = () => {
             <Input
               value={news.title}
               onChange={handleChange}
-              placeholder="Enter a title"
+              placeholder="Enter title"
               name="title"
             />
           </Form.Item>
@@ -148,21 +134,21 @@ const CreateNews: React.FC = () => {
             <Input
               value={news.description}
               onChange={handleChange}
-              placeholder="Enter a description"
+              placeholder="Enter description"
               name="description"
             />
           </Form.Item>
 
           <Form.Item
-            label="News text"
+            label="News Text"
             name="fullText"
-            rules={[{ required: true, message: 'Please enter the text of the news!' }]}
+            rules={[{ required: true, message: 'Please enter the news text!' }]}
           >
             <Input.TextArea
               value={news.fullText}
               onChange={handleChange}
               rows={4}
-              placeholder="Enter the text of the news"
+              placeholder="Enter news text"
               name="fullText"
             />
           </Form.Item>
@@ -173,7 +159,7 @@ const CreateNews: React.FC = () => {
             rules={[{ required: true, message: 'Please select a category!' }]}
           >
             <Select
-              placeholder="Select a category"
+              placeholder="Select category"
               value={news.categoryId}
               onChange={(value) => setNews({ ...news, categoryId: value })}
             >
@@ -191,7 +177,7 @@ const CreateNews: React.FC = () => {
             rules={[{ required: true, message: 'Please select an author!' }]}
           >
             <Select
-              placeholder="Select an author"
+              placeholder="Select author"
               value={news.authorId}
               onChange={(value) => setNews({ ...news, authorId: value })}
             >
@@ -203,19 +189,13 @@ const CreateNews: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            label="Upload image"
-            name="images"
-          >
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+          <Form.Item label="Image">
+            <input type="file" onChange={handleFileChange} />
           </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
-              Create news
+              Create News
             </Button>
           </Form.Item>
         </Form>
